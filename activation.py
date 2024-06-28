@@ -1,20 +1,34 @@
-import math
-
-
-class Activation:
-    def __init__(self, function, derivative):
-        pass
+import numpy as np
 
 
 def sigmoid(z) -> float:
-    pass
+    return 1.0 / (1.0 + np.exp(-z))
 
 def sigmoid_derivative(z) -> float:
-    pass 
+    return sigmoid(z) * (1.0 - sigmoid(z))
 
 
-def ReLU(z):
+def relu(z):
     pass
 
-def ReLU_derivative(z):
+def relu_derivative(z):
     pass
+
+
+class Activation:
+    function = None
+    derivative = None
+
+    def __init__(self, f, d):
+        self.function = f
+        self.derivative = d   
+
+
+class Sigmoid(Activation):
+    def __init__(self):
+        super(Sigmoid, self).__init__(sigmoid, sigmoid_derivative)
+
+
+class ReLU(Activation):
+    def __init__(self):
+        super(ReLU, self).__init__(relu, relu_derivative)
