@@ -1,12 +1,7 @@
 import numpy as np
 
 from activation import Activation
-
-
-def initialize_weigths(in_features : int, out_features : int, init_method : str) -> np.ndarray:
-    if init_method == "xavier":
-        x = np.sqrt(6.0 / (in_features + out_features))
-        return np.random.uniform(-x, x, size=[out_features, in_features + 1])
+from initializers import Initializer, NormalXavier
 
 
 class LinearLayer:
@@ -16,8 +11,8 @@ class LinearLayer:
     z : np.ndarray = None
     a : np.ndarray = None
 
-    def __init__(self, in_features : int, out_features : int, activation_: Activation, init_method : str = "xavier"):
-        self.weights = initialize_weigths(in_features, out_features, init_method)
+    def __init__(self, in_features : int, out_features : int, activation_: Activation, init_method : Initializer = NormalXavier):
+        self.weights = init_method.generate(in_features, out_features)
         self.activation = activation_()
 
     def forward(self, x : np.ndarray) -> np.ndarray:
