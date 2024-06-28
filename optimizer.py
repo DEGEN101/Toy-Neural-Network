@@ -66,14 +66,22 @@ class RMSProp(Optimizer):
 
         self.beta = decay_rate
         self.epsilon = epsilon_
-        self.squared_gradients = deepcopy(self.parameters)
+        self.squared_gradients = deepcopy(self.gradients)
     
     def step(self, loss : np.ndarray) -> None:
-        pass
+        N = len(self.parameters)
 
-class RMSProp(Optimizer):
-    def __init__(self, parameters : List[LinearLayer], learning_rate : float, decay_rate : float):
-        super().__init__(parameters, learning_rate)
-    
-    def step(self, loss : np.ndarray):
-        pass
+        errors = [np.array([]) for _ in range(N)]
+        errors[N - 1] = loss
+        
+        for i in range(N - 2, -1, -1):
+            errors[i] = self.compute_error(self.parameters[i], self.parameters[i + 1], errors[i + 1])
+
+        for i in range(N):
+            self.gradients[i] = errors[i] @ self.parameters[i].input.transpose()
+            
+            self.squared_gradients[i] = self.beta * self.squared_gradients[i] + (1 - self.beta) * np.power(self.gradients[i], 2) 
+
+            dtheta = self.alpha * self.gradients[i] / (np.sqrt(self.squared_gradients[i]) + self.epsilon)
+            new_weights = self.parameters[i].get_weights() - dtheta
+            self.parameters[i].set_weights(new_weights)

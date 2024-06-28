@@ -1,33 +1,59 @@
 import numpy as np
 
+from typing import List, Optional
+
 from linearlayer import LinearLayer
-from activation import Sigmoid
-from optimizer import SGD
+from activation import Tanh, ReLU
+from optimizer import SGD, RMSProp
+
+
+class NeuralNetwork:
+    parameters: List[LinearLayer] = None
+
+    def __init__(self, parameters: Optional["LinearLayer"] = None):
+        self.parameters = parameters
+    
+    def predict(self, x : np.ndarray) -> np.ndarray:
+        result = x.transpose()
+        for parameter in self.parameters:
+            result = parameter(result)
+        return result
+
+    def add_parameter(self, parameter):
+        if self.parameters == None: self.parameters = []
+        self.parameters.append(parameter)
+
+    def get_parameters(self) -> List[LinearLayer]:
+        return self.parameters
+
 
 def main():
-    theta_1 = np.array([[-2, 3], [2, -1]], dtype=np.float32)
-    theta_2 = np.array([[2, -1, 1]], dtype=np.float32)
+    model = NeuralNetwork()
+    model.add_parameter(LinearLayer(2, 8, ReLU))
+    model.add_parameter(LinearLayer(8, 8, ReLU))
+    model.add_parameter(LinearLayer(8, 1, Tanh))
 
-    l1 = LinearLayer(1, 2, Sigmoid)
-    l1.set_weights(theta_1)
+    optimizer = RMSProp(model.get_parameters(), 0.01)
 
-    l2 = LinearLayer(2, 1, Sigmoid)
-    l2.set_weights(theta_2)
+    x = np.array([[[0, 0]], [[1, 0]], [[0, 1]], [[1, 1]]])
+    y = np.array([[[0]], [[1]], [[1]], [[0]]])
 
-    layers = [l1, l2]
-    optimizer = SGD(layers, 0.2)
-
-    x, y = np.array([2]), np.array([4])
-    for layer in layers:
-        x = layer(x)
+    for i in range(x.shape[0]):
+        y_pred = model.predict(x[i])
+        print(f"Input: {x[i]}, Prediction: {y_pred}, Actual: {y[i]}")
     
-    error = x - y
-    print(error)
+    print("[!] Training Model")
+    for _ in range(250):
+        for i in range(x.shape[0]):
+            y_pred = model.predict(x[i])
+            loss = y_pred - y[i]
 
-    optimizer.step(error)
+            optimizer.step(loss)
+    print("[+] Done Training")
 
-    for layer in layers:
-        print(layer.get_weights())
+    for i in range(x.shape[0]):
+        y_pred = model.predict(x[i])
+        print(f"Input: {x[i]}, Prediction: {y_pred}, Actual: {y[i]}")
 
 if __name__ == "__main__":
     main()
