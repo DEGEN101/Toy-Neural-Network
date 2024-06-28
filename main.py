@@ -2,7 +2,7 @@ import numpy as np
 
 from typing import List, Optional
 
-from initializers import NormalHe
+from initializer import NormalHe
 from linearlayer import LinearLayer
 from activation import Tanh, ReLU
 from optimizer import SGD, RMSProp
