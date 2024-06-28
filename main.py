@@ -2,6 +2,7 @@ import numpy as np
 
 from typing import List, Optional
 
+from initializers import NormalHe
 from linearlayer import LinearLayer
 from activation import Tanh, ReLU
 from optimizer import SGD, RMSProp
@@ -29,8 +30,8 @@ class NeuralNetwork:
 
 def main():
     model = NeuralNetwork()
-    model.add_parameter(LinearLayer(2, 8, ReLU))
-    model.add_parameter(LinearLayer(8, 8, ReLU))
+    model.add_parameter(LinearLayer(2, 8, ReLU, init_method=NormalHe))
+    model.add_parameter(LinearLayer(8, 8, ReLU, init_method=NormalHe))
     model.add_parameter(LinearLayer(8, 1, Tanh))
 
     optimizer = RMSProp(model.get_parameters(), 0.01)
