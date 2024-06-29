@@ -4,7 +4,7 @@ import numpy as np
 from typing import List
 from copy import deepcopy
 
-from linearlayer import LinearLayer
+from .linearlayer import LinearLayer
 
 
 class Optimizer(abc.ABC):

@@ -1,7 +1,7 @@
 import numpy as np
 
-from activation import Activation
-from initializer import Initializer, NormalXavier
+from .activation import Activation
+from .initializer import Initializer, NormalXavier
 
 
 class LinearLayer:

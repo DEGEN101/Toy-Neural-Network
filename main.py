@@ -2,11 +2,11 @@ import numpy as np
 
 from typing import List, Optional
 
-from initializer import NormalHe
-from linearlayer import LinearLayer
-from activation import Sigmoid, ReLU
-from optimizer import SGD, RMSProp
-from losses import BinaryCrossEntropy, CategoricalCrossEntropyLoss
+from TNN.initializer import NormalHe
+from TNN.linearlayer import LinearLayer
+from TNN.activation import Sigmoid, ReLU
+from TNN.optimizer import RMSProp
+from TNN.losses import CategoricalCrossEntropyLoss
 
 
 class NeuralNetwork:
