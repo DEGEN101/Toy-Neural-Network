@@ -4,9 +4,9 @@ from typing import List, Optional
 
 from TNN.initializer import NormalHe
 from TNN.linearlayer import LinearLayer
-from TNN.activation import Sigmoid, ReLU
+from TNN.activation import ReLU
 from TNN.optimizer import RMSProp
-from TNN.losses import CategoricalCrossEntropyLoss
+from TNN.losses import MSELoss
 
 
 class NeuralNetwork:
@@ -31,21 +31,33 @@ class NeuralNetwork:
 
 def main():
     model = NeuralNetwork()
-    model.add_parameter(LinearLayer(2, 8, ReLU, init_method=NormalHe))
+    model.add_parameter(LinearLayer(4, 8, ReLU, init_method=NormalHe))
     model.add_parameter(LinearLayer(8, 8, ReLU, init_method=NormalHe))
-    model.add_parameter(LinearLayer(8, 2, Sigmoid))
+    model.add_parameter(LinearLayer(8, 2, ReLU, init_method=NormalHe))
 
     optimizer = RMSProp(model.get_parameters(), 0.01)
-    criterion = CategoricalCrossEntropyLoss()
+    criterion = MSELoss()
 
-    x = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
-    y = np.array([[1, 0], [0, 1], [0, 1], [1, 0]])
+    x = np.array([
+        [0, 0, 0, 0], [0, 0, 0, 1], 
+        [0, 0, 1, 0], [0, 0, 1, 1],
+        [0, 1, 0, 0], [1, 0, 0, 0],
+        [1, 1, 0, 0], [0, 1, 0, 1],
+        [1, 0, 0, 1], [0, 1, 1, 0],
+    ])
+    y = np.array([
+        [0, 0], [0, 1], 
+        [1, 0], [1, 1],
+        [0, 1], [1, 0],
+        [1, 1], [1, 0],
+        [1, 1], [1, 1],
+    ])
 
     # Initial Predictions
     print("[!] Testing Model - Pre-training")
     for i in range(x.shape[0]):
-        y_pred = model.predict(x[i])
-        print(f"Input: {x[i]}, Prediction: {y_pred.argmax()}, Actual: {y[i].argmax()}")
+        y_pred = model.predict(x[i]).reshape(-1)
+        print(f"Input: {x[i]}, Prediction: {y_pred}, Actual: {y[i]}")
 
     print("[+] Done Testing")
 
@@ -73,8 +85,8 @@ def main():
     # Test Model
     print("[!] Testing Model - Post-training")
     for i in range(x.shape[0]):
-        y_pred = model.predict(x[i])
-        print(f"Input: {x[i]}, Prediction: {y_pred.argmax()}, Actual: {y[i].argmax()}")
+        y_pred = model.predict(x[i]).reshape(-1)
+        print(f"Input: {x[i]}, Prediction: {y_pred}, Actual: {y[i]}")
     
     print("[+] Done Testing")
 
