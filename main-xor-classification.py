@@ -2,11 +2,11 @@ import numpy as np
 
 from typing import List, Optional
 
-from initializer import NormalHe
-from linearlayer import LinearLayer
-from activation import Sigmoid, ReLU
-from optimizer import SGD, RMSProp
-from losses import BinaryCrossEntropy, CategoricalCrossEntropyLoss
+from TNN.initializer import NormalHe
+from TNN.linearlayer import LinearLayer
+from TNN.activation import Sigmoid, ReLU
+from TNN.optimizer import RMSProp
+from TNN.losses import CategoricalCrossEntropyLoss
 
 
 class NeuralNetwork:
@@ -41,12 +41,18 @@ def main():
     x = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
     y = np.array([[1, 0], [0, 1], [0, 1], [1, 0]])
 
+    # Initial Predictions
+    print("[!] Testing Model - Pre-training")
     for i in range(x.shape[0]):
         y_pred = model.predict(x[i])
         print(f"Input: {x[i]}, Prediction: {y_pred.argmax()}, Actual: {y[i].argmax()}")
-    
-    print("[!] Training Model")
-    for epoch in range(1, 150 + 1):
+
+    print("[+] Done Testing")
+
+    # Train Model
+    print("\n[!] Training Model")
+    EPOCHS = 750
+    for epoch in range(1, EPOCHS + 1):
         loss = np.zeros(shape=y.shape)
 
         for i in range(x.shape[0]):
@@ -56,16 +62,21 @@ def main():
             loss += criterion.function(y_true, y_pred)
             loss_grad = criterion.derivative(y_true, y_pred)
 
+            optimizer.zero_gradients()
             optimizer.step(loss_grad)
 
-        if epoch % 25 == 0:
+        if epoch % 50 == 0:
             print(f"Epoch: {epoch}, Loss: {loss.mean()}")
 
-    print("[+] Done Training")
+    print("[+] Done Training\n")
 
+    # Test Model
+    print("[!] Testing Model - Post-training")
     for i in range(x.shape[0]):
         y_pred = model.predict(x[i])
         print(f"Input: {x[i]}, Prediction: {y_pred.argmax()}, Actual: {y[i].argmax()}")
+    
+    print("[+] Done Testing")
 
 if __name__ == "__main__":
     main()
